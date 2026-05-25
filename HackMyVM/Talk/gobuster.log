@@ -1,0 +1,5 @@
+css                 [36m (Status: 301)[0m [Size: 185][34m [--> http://192.168.56.108/css/][0m
+db                  [36m (Status: 301)[0m [Size: 185][34m [--> http://192.168.56.108/db/][0m
+img                 [36m (Status: 301)[0m [Size: 185][34m [--> http://192.168.56.108/img/][0m
+index.php           [32m (Status: 200)[0m [Size: 2141]
+js                  [36m (Status: 301)[0m [Size: 185][34m [--> http://192.168.56.108/js/][0m
